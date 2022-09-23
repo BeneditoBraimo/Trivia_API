@@ -1,9 +1,9 @@
-from crypt import methods
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
+from .pagination import paginate
 
 from models import setup_db, Question, Category
 
@@ -67,9 +67,28 @@ def create_app(test_config=None):
         
         # fetch from the db all the available questions
         # the questions are ordered by difficulty
-        questions = Question.query.order_by(Question.difficulty).all()
+        questions = Question.query.all()
+        # format questions objects. Otherwise, it will throw 'TypeError: Object of type X is not JSON serializable' exception
+        questions_list = [question.format() for question in  questions]
+        # paginate the questions in order to display ten questions per page
+        paginated_questions = paginate(request, questions_list, QUESTIONS_PER_PAGE)
+        # fetch all categories from the database
         categories = Category.query.order_by(Category.type).all()
-    
+        # format the categories
+        formatted_categories = [category.format() for category in categories]
+
+        if len(questions) != 0:
+            # return a JSON object in a format as expected in QuestionView.js source file
+            return jsonify({
+                "success": True,
+                "questions": paginated_questions,
+                "total_questions": len(questions_list),
+                "category": formatted_categories,
+                "current_category": None,
+            })
+        else:
+            # Throw 404 http error when empty questions list is returned from the database queries
+            abort(404)
     """
     @TODO:
     Create an endpoint to DELETE question using a question ID.

@@ -52,16 +52,7 @@ def create_app(test_config=None):
             abort(404)
 
     """
-    @TODO:
-    Create an endpoint to handle GET requests for questions,
-    including pagination (every 10 questions).
-    This endpoint should return a list of questions,
-    number of total questions, current category, categories.
-
-    TEST: At this point, when you start the application
-    you should see questions and categories generated,
-    ten questions per page and pagination at the bottom of the screen for three pages.
-    Clicking on the page numbers should update the questions.
+    get_questions endpoint
     """
 
     @app.route("/questions", methods=["GET"])
@@ -95,11 +86,7 @@ def create_app(test_config=None):
             abort(404)
 
     """
-    @TODO:
-    Create an endpoint to DELETE question using a question ID.
-
-    TEST: When you click the trash icon next to a question, the question will be removed.
-    This removal will persist in the database and when you refresh the page.
+    delete_question endpoint
     """
 
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
@@ -143,7 +130,29 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
     """
+    @app.route("/questions/create", methods=["POST"])
+    def add_question():
+        """
+        fetch form data as expected in FormView.js
+        """
+        try:
+            question = Question(
+                question=request.json.get("question"),
+                answer=request.json.get("answer"),
+                category=request.json.get("category"),
+                difficulty=request.json.get("difficulty")
+            )
 
+            # persist the inserted question in the database
+            question.insert()
+
+            # return a JSON object with success value and the ID of the added question
+            return jsonify({
+                "success": True,
+                "created":question.id,
+            })
+        except:
+            abort(422)
     """
     @TODO:
     Create a POST endpoint to get questions based on a search term.

@@ -32,6 +32,7 @@ def create_app(test_config=None):
     """
     get_categories endpoint
     """
+
     @app.route("/categories", methods=["GET"])
     def get_categories():
         # retrieve categories and sort by category types
@@ -62,14 +63,15 @@ def create_app(test_config=None):
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
     """
+
     @app.route("/questions", methods=["GET"])
     def get_questions():
-        
+
         # fetch from the db all the available questions
         # the questions are ordered by difficulty
         questions = Question.query.all()
         # format questions objects. Otherwise, it will throw 'TypeError: Object of type X is not JSON serializable' exception
-        questions_list = [question.format() for question in  questions]
+        questions_list = [question.format() for question in questions]
         # paginate the questions in order to display ten questions per page
         paginated_questions = paginate(request, questions_list, QUESTIONS_PER_PAGE)
         # fetch all categories from the database
@@ -79,16 +81,19 @@ def create_app(test_config=None):
 
         if len(questions) != 0:
             # return a JSON object in a format as expected in QuestionView.js source file
-            return jsonify({
-                "success": True,
-                "questions": paginated_questions,
-                "total_questions": len(questions_list),
-                "category": formatted_categories,
-                "current_category": None,
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "questions": paginated_questions,
+                    "total_questions": len(questions_list),
+                    "category": formatted_categories,
+                    "current_category": None,
+                }
+            )
         else:
             # Throw 404 http error when empty questions list is returned from the database queries
             abort(404)
+
     """
     @TODO:
     Create an endpoint to DELETE question using a question ID.
@@ -96,6 +101,7 @@ def create_app(test_config=None):
     TEST: When you click the trash icon next to a question, the question will be removed.
     This removal will persist in the database and when you refresh the page.
     """
+
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
     def delete_question(question_id):
         # fetch the question with the provided question_id
@@ -104,7 +110,7 @@ def create_app(test_config=None):
             # alert the user when the provided question ID is not valid
             abort(422)
         else:
-            
+
             # delete the question with the matching question_id provided by the user
             question.delete()
 
@@ -114,16 +120,18 @@ def create_app(test_config=None):
             # query the categories
             categories_list = Category.query.order_by(Category.type).all()
 
-            #paginate the questions 
+            # paginate the questions
             paginated_questions = paginate(request, questions_list, QUESTIONS_PER_PAGE)
             categories = [category.format() for category in categories_list]
-            return jsonify({
-                "success": True,
-                "questions": [q.format() for q in paginated_questions],
-                "total_questions": len(questions_list),
-                "categories": categories,
-                "current_category": None,
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "questions": [q.format() for q in paginated_questions],
+                    "total_questions": len(questions_list),
+                    "categories": categories,
+                    "current_category": None,
+                }
+            )
 
     """
     @TODO:

@@ -1,3 +1,4 @@
+from crypt import methods
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -7,6 +8,7 @@ import random
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -20,6 +22,7 @@ def create_app(test_config=None):
     """
     @TODO: Use the after_request decorator to set Access-Control-Allow
     """
+
     @app.after_request
     def after_request(response):
         response.headers.add(
@@ -28,17 +31,33 @@ def create_app(test_config=None):
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Types, Authorization, True"
         )
-        response.headers.add(
-            "Access-Control-Allow-Origin", "*"
-        )
+        response.headers.add("Access-Control-Allow-Origin", "*")
 
         return response
+
     """
     @TODO:
     Create an endpoint to handle GET requests
     for all available categories.
     """
 
+    @app.route("/categories", methods=["GET"])
+    def get_categories():
+        # retrieve categories and sort by category types
+        categories = Category.query.order_by(Category.type).all()
+        categories_list = [category.format() for category in categories]
+
+        if len(categories_list) != 0:
+
+            return jsonify(
+                {
+                    "success": True,
+                    "categories": categories_list,
+                }
+            )
+        else:
+            # abort if the query result is empty
+            abort(404)
 
     """
     @TODO:
@@ -111,4 +130,3 @@ def create_app(test_config=None):
     """
 
     return app
-

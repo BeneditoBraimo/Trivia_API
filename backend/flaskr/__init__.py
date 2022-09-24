@@ -130,29 +130,35 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
     """
+
     @app.route("/questions/create", methods=["POST"])
     def add_question():
-        """
-        fetch form data as expected in FormView.js
-        """
+
         try:
+            """
+            instantiate a Question object and initialize with the data retrieved from
+            the form as is in the FormView.js source file
+            """
             question = Question(
                 question=request.json.get("question"),
                 answer=request.json.get("answer"),
                 category=request.json.get("category"),
-                difficulty=request.json.get("difficulty")
+                difficulty=request.json.get("difficulty"),
             )
 
             # persist the inserted question in the database
             question.insert()
 
             # return a JSON object with success value and the ID of the added question
-            return jsonify({
-                "success": True,
-                "created":question.id,
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "created": question.id,
+                }
+            )
         except:
             abort(422)
+
     """
     @TODO:
     Create a POST endpoint to get questions based on a search term.
@@ -164,10 +170,36 @@ def create_app(test_config=None):
     Try using the word "title" to start.
     """
 
+    @app.route("/question/search", methods=["POST"])
+    def search_question():
+        body = request.get_json()
+
+        # searchTerm is a key of JSON returned in QuestionView.js source file, line 91 col 30
+        search_term = body.get("searchTerm")
+
+        if search_term is None:
+            abort(404)
+        # fetch any question whom the search term is a substring of a question
+        matching_questions = (
+            Question.query.filter(Question.question.ilike(f"%{search_term}%"))
+            .order_by(Question.difficulty)
+            .all()
+        )
+        categories = Category.query.order_by(Category.type).all()
+        questions = [question.format() for question in matching_questions]
+
+        return jsonify({
+            "success": True,
+            "questions": questions,
+            "total_questions": len(Question.query.all()),
+            "categories": [category.format() for category in categories],
+            "current_category": None,
+
+        })
+        
     """
     @TODO:
     Create a GET endpoint to get questions based on category.
-
     TEST: In the "List" tab / main screen, clicking on one of the
     categories in the left column will cause only questions of that
     category to be shown.

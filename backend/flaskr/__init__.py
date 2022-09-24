@@ -188,15 +188,16 @@ def create_app(test_config=None):
         categories = Category.query.order_by(Category.type).all()
         questions = [question.format() for question in matching_questions]
 
-        return jsonify({
-            "success": True,
-            "questions": questions,
-            "total_questions": len(Question.query.all()),
-            "categories": [category.format() for category in categories],
-            "current_category": None,
+        return jsonify(
+            {
+                "success": True,
+                "questions": questions,
+                "total_questions": len(Question.query.all()),
+                "categories": [category.format() for category in categories],
+                "current_category": None,
+            }
+        )
 
-        })
-        
     """
     @TODO:
     Create a GET endpoint to get questions based on category.

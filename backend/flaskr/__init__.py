@@ -198,37 +198,36 @@ def create_app(test_config=None):
             }
         )
 
-    """
-    @TODO:
-    Create a GET endpoint to get questions based on category.
-    TEST: In the "List" tab / main screen, clicking on one of the
-    categories in the left column will cause only questions of that
-    category to be shown.
-    """
     @app.route("/categories/<int:category_id>/questions", methods=["GET"])
     def get_questions_by_category(category_id):
 
         """
-        since the member category of the class Question is a string and the provided 
+        since the member category of the class Question is a string and the provided
         category_id is an int value, it is necessary to cast the category_id to string data type
         """
         category = str(category_id)
-        
+
         # fetch all the questions of the same category as the category_id parameter
-        questions = Question.query.filter(Question.category == category).order_by(Question.difficulty).all()
+        questions = (
+            Question.query.filter(Question.category == category)
+            .order_by(Question.difficulty)
+            .all()
+        )
         if len(questions) != 0:
-        
+
             # paginate the questions
             paginated_questions = paginate(request, questions, QUESTIONS_PER_PAGE)
             questions_list = [question.format() for question in paginated_questions]
             categories = Category.query.order_by(Category.type).all()
-            return jsonify({
-                "success": True,
-                "questions": questions_list,
-                "total_questions": len(Question.query.all()),
-                "categories": [c.format() for c in categories],
-                "current_category": None,
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "questions": questions_list,
+                    "total_questions": len(Question.query.all()),
+                    "categories": [c.format() for c in categories],
+                    "current_category": None,
+                }
+            )
         else:
             abort(404)
 

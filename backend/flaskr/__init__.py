@@ -120,16 +120,6 @@ def create_app(test_config=None):
                 }
             )
 
-    """
-    @TODO:
-    Create an endpoint to POST a new question,
-    which will require the question and answer text,
-    category, and difficulty score.
-
-    TEST: When you submit a question on the "Add" tab,
-    the form will clear and the question will appear at the end of the last page
-    of the questions list in the "List" tab.
-    """
 
     @app.route("/questions/create", methods=["POST"])
     def add_question():
@@ -159,16 +149,6 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-    """
-    @TODO:
-    Create a POST endpoint to get questions based on a search term.
-    It should return any questions for whom the search term
-    is a substring of the question.
-
-    TEST: Search by any phrase. The questions list will update to include
-    only question that include that string within their question.
-    Try using the word "title" to start.
-    """
 
     @app.route("/question/search", methods=["POST"])
     def search_question():
@@ -219,11 +199,12 @@ def create_app(test_config=None):
             paginated_questions = paginate(request, questions, QUESTIONS_PER_PAGE)
             questions_list = [question.format() for question in paginated_questions]
             categories = Category.query.order_by(Category.type).all()
+            all_questions = Question.query.all()
             return jsonify(
                 {
                     "success": True,
                     "questions": questions_list,
-                    "total_questions": len(Question.query.all()),
+                    "total_questions": len(all_questions),
                     "categories": [c.format() for c in categories],
                     "current_category": None,
                 }

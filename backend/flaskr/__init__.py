@@ -265,6 +265,9 @@ def create_app(test_config=None):
     Create error handlers for all expected errors
     including 404 and 422.
     """
+    """
+    function to handle 'not found' error (404)
+    """
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -273,6 +276,19 @@ def create_app(test_config=None):
             "message": "Resource not found",
         }), 404
     
+    """
+    function to handle 'method not allowed' error (405)
+    """
+    @app.errorhandler(405)
+    def not_allowed(error):
+        return jsonify({
+            "success": False,
+            "error": 405,
+            "message": "method not allowed"
+        })
+    """
+    function to handle 'unprocessable entity' error
+    """
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({

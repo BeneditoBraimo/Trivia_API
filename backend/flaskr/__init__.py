@@ -285,7 +285,7 @@ def create_app(test_config=None):
     def not_allowed(error):
         return jsonify(
             {"success": False, "error": 405, "message": "method not allowed"}
-        )
+        ), 405
 
     """
     function to handle 'unprocessable entity' error

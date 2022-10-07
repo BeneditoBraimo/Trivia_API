@@ -211,7 +211,6 @@ def create_app(test_config=None):
         else:
             abort(404)
 
-    
     @app.route("/quizzes", methods=["POST"])
     def play_quiz():
         body = request.get_json()
@@ -249,7 +248,7 @@ def create_app(test_config=None):
 
                 # choose a random question
                 next_question.append(available_questions[index])
-            
+
             return jsonify(
                 {
                     "success": True,
@@ -261,39 +260,47 @@ def create_app(test_config=None):
             abort(422)
 
     """
-    @TODO:
-    Create error handlers for all expected errors
-    including 404 and 422.
-    """
-    """
     function to handle 'not found' error (404)
     """
+
     @app.errorhandler(404)
     def not_found(error):
-        return jsonify({
-            "success": False,
-            "error": 404,
-            "message": "Resource not found",
-        }), 404
-    
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": 404,
+                    "message": "Resource not found",
+                }
+            ),
+            404,
+        )
+
     """
     function to handle 'method not allowed' error (405)
     """
+
     @app.errorhandler(405)
     def not_allowed(error):
-        return jsonify({
-            "success": False,
-            "error": 405,
-            "message": "method not allowed"
-        })
+        return jsonify(
+            {"success": False, "error": 405, "message": "method not allowed"}
+        )
+
     """
     function to handle 'unprocessable entity' error
     """
+
     @app.errorhandler(422)
     def unprocessable(error):
-        return jsonify({
-            "sucess": False,
-            "error": 422,
-            "message": "Unprocessable entity",
-        }), 422
+        return (
+            jsonify(
+                {
+                    "sucess": False,
+                    "error": 422,
+                    "message": "Unprocessable entity",
+                }
+            ),
+            422,
+        )
+
     return app

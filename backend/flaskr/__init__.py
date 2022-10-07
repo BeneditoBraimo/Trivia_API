@@ -198,13 +198,14 @@ def create_app(test_config=None):
             paginated_questions = paginate(request, questions, QUESTIONS_PER_PAGE)
             questions_list = [question.format() for question in paginated_questions]
             categories = Category.query.order_by(Category.type).all()
+            formatted_categories = [c.format() for c in categories]
             all_questions = Question.query.all()
             return jsonify(
                 {
                     "success": True,
                     "questions": questions_list,
                     "total_questions": len(all_questions),
-                    "categories": [c.format() for c in categories],
+                    "categories": formatted_categories,
                     "current_category": None,
                 }
             )

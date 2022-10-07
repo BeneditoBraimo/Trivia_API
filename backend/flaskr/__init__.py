@@ -165,13 +165,14 @@ def create_app(test_config=None):
         )
         categories = Category.query.order_by(Category.type).all()
         questions = [question.format() for question in matching_questions]
+        categories_list = [category.format() for category in categories]
 
         return jsonify(
             {
                 "success": True,
                 "questions": questions,
                 "total_questions": len(Question.query.all()),
-                "categories": [category.format() for category in categories],
+                "categories": categories_list,
                 "current_category": None,
             }
         )

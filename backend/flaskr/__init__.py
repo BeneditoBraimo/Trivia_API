@@ -244,11 +244,11 @@ def create_app(test_config=None):
                 questions_list = [q.format() for q in questions]
 
                 # filter questions that have not been displayed to the user
-                valid_questions = questions_list not in previous_questions
-                index = random.randint(0, len(valid_questions) - 1)
+                available_questions = questions_list not in previous_questions
+                index = random.randint(0, len(available_questions) - 1)
 
                 # choose a random question
-                next_question.append(valid_questions[index])
+                next_question.append(available_questions[index])
             
             return jsonify(
                 {

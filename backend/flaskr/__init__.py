@@ -210,18 +210,7 @@ def create_app(test_config=None):
         else:
             abort(404)
 
-    """
-    @TODO:
-    Create a POST endpoint to get questions to play the quiz.
-    This endpoint should take category and previous question parameters
-    and return a random questions within the given category,
-    if provided, and that is not one of the previous questions.
-
-    TEST: In the "Play" tab, after a user selects "All" or a category,
-    one question at a time is displayed, the user is allowed to answer
-    and shown whether they were correct or not.
-    """
-
+    
     @app.route("/quizzes", methods=["POST"])
     def play_quiz():
         body = request.get_json()

@@ -222,7 +222,6 @@ def create_app(test_config=None):
         quiz_category = body.get("quiz_category")
 
         next_question = []
-        question = []
 
         try:
             """

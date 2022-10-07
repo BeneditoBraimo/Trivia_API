@@ -120,7 +120,6 @@ def create_app(test_config=None):
                 }
             )
 
-
     @app.route("/questions/create", methods=["POST"])
     def add_question():
 
@@ -148,7 +147,6 @@ def create_app(test_config=None):
             )
         except:
             abort(422)
-
 
     @app.route("/question/search", methods=["POST"])
     def search_question():
@@ -223,6 +221,55 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+
+    @app.route("/quizzes", methods=["POST"])
+    def play_quiz():
+        body = request.get_json()
+
+        # previous_questions(as defined in QuizView.js line 57 col 9)
+        previous_questions = body.get("previous_questions")
+
+        # quiz_category (as specified in QuizView.js source file, line 58 col 9)
+        quiz_category = body.get("quiz_category")
+
+        next_question = []
+        question = []
+
+        try:
+            """
+            assuming that the the request provides th previous_question as a list of question IDs
+            ( QuizView.js source file at line 93 col 7)
+            """
+            # check if there a any previous questions
+            if quiz_category == None and len(previous_questions) == 0:
+                questions = Question.query.order_by(Question.difficulty).all()
+                questions_list = [q.format() for q in questions]
+                index = random.randint(0, len(questions_list) - 1)
+                next_question.append(questions_list[index])
+
+            else:
+                # fetch all the questions of a given category
+                questions = Question.query.filter(
+                    Question.category == quiz_category
+                ).all()
+                questions_list = [q.format() for q in questions]
+
+                # filter questions that have not been displayed to the user
+                valid_questions = questions_list not in previous_questions
+                index = random.randint(0, len(valid_questions) - 1)
+
+                # choose a random question
+                next_question.append(valid_questions[index])
+            
+            return jsonify(
+                {
+                    "success": True,
+                    "question": next_question,
+                }
+            )
+
+        except:
+            abort(422)
 
     """
     @TODO:

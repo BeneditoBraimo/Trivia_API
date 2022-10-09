@@ -148,7 +148,7 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-    @app.route("/question/search", methods=["POST"])
+    @app.route("/questions/search", methods=["POST"])
     def search_question():
         body = request.get_json()
 

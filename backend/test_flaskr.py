@@ -42,6 +42,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertGreater(len(data["categories"]), 0)
 
+    def test_404_get_non_existing_category(self):
+        res = self.client().get("/categories/88")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Resource not found")
+        self.assertEqual(data["error"], 404)
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

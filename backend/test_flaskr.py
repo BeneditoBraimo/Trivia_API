@@ -1,6 +1,7 @@
 import os
 import unittest
 import json
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
@@ -67,6 +68,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertNotEqual(data["success"], True)
         self.assertEqual(data["error"], 405)
         self.assertEqual(data["message"],"Method not allowed")
+
+    def test_delete_question(self):
+        res = self.client().delete("/questions/4")
+        data = json.loads(res.data)
+
+        self.assertNotEqual(res.status_code, 422)
+        self.assertNotEqual(data["success"], False)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

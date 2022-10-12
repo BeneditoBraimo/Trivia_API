@@ -60,6 +60,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertGreater(len(data["questions"]), 0)
         self.assertTrue(data["total_questions"])
 
+    def test_405_get_question(self):
+        res = self.client().get("/questions/5")
+        data =json.loads(res.data)
+        self.assertNotEqual(res.status_code, 200)
+        self.assertNotEqual(data["success"], True)
+        self.assertEqual(data["error"], 405)
+        self.assertEqual(data["message"],"Method not allowed")
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
